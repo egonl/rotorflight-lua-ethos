@@ -332,7 +332,15 @@ end
 -- CREATE:  Called once each time the system widget is opened by the user.
 local function create()
     sensor = sport.getSensor({primId=0x32})
-    rssiSensor = system.getSource("RSSI")
+
+    -- Add TD Compatibility (Since TD RSSI comes in as "RSSI 2.4G" and "RSSI 900M" rather than just "RSSI")
+    if system.getSource("RSSI") ~= nil then
+        rssiSensor = system.getSource("RSSI")
+    elseif system.getSource("RSSI 2.4G") ~= nil then
+        rssiSensor = system.getSource("RSSI 2.4G")
+    elseif system.getSource("RSSI 900M") ~= nil then
+        rssiSensor = system.getSource("RSSI 900M")
+    end
     --sensor:idle(false)
 
     protocol = assert(loadScript("/scripts/RF2/protocols.lua"))()
